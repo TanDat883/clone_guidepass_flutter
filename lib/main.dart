@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/welcome_screen.dart';
+import 'package:clone_guidepass/config/app_theme.dart';
+import 'package:clone_guidepass/config/app_routes.dart';
 
 void main() {
   runApp(const GuideApp());
@@ -13,8 +14,9 @@ class GuideApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Guide App Vietnam',
-      theme: ThemeData(primarySwatch: Colors.red),
-      home: const WelcomeScreen(),
+      theme: AppTheme.lightTheme,
+      initialRoute: AppRoutes.welcome,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }
