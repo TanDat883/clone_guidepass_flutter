@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:clone_guidepass/models/tour_spot.dart';
 import 'package:clone_guidepass/config/app_theme.dart';
 import 'package:clone_guidepass/data/tour_data.dart';
 import 'package:clone_guidepass/widgets/language_dialog.dart';
 import 'package:clone_guidepass/screens/tour/widgets/tour_card.dart';
 import 'package:clone_guidepass/screens/tour/widgets/tour_bottom_nav.dart';
+import 'package:clone_guidepass/screens/tour/widgets/keypad_view.dart';
 
 class TourListScreen extends StatefulWidget {
   const TourListScreen({super.key});
@@ -32,7 +34,7 @@ class _TourListScreenState extends State<TourListScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          '1-Dinh Độc Lập',
+          _currentNavIndex == 1 ? 'POI' : '1-Dinh Độc Lập',
           style: const TextStyle(
             color: AppTheme.white,
             fontSize: 16,
@@ -51,18 +53,7 @@ class _TourListScreenState extends State<TourListScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(AppTheme.spacingMD),
-        itemCount: spots.length,
-        itemBuilder: (context, index) {
-          return TourCard(
-            spot: spots[index],
-            onTap: () {
-              // TODO: Navigate to spot detail
-            },
-          );
-        },
-      ),
+      body: _buildBody(spots),
       bottomNavigationBar: TourBottomNav(
         currentIndex: _currentNavIndex,
         onTap: (index) {
@@ -71,6 +62,26 @@ class _TourListScreenState extends State<TourListScreen> {
           });
         },
       ),
+    );
+  }
+
+  Widget _buildBody(List<TourSpot> spots) {
+    if (_currentNavIndex == 1) {
+      return const KeypadView();
+    }
+    
+    // Default: Danh sách (index 0)
+    return ListView.builder(
+      padding: const EdgeInsets.all(AppTheme.spacingMD),
+      itemCount: spots.length,
+      itemBuilder: (context, index) {
+        return TourCard(
+          spot: spots[index],
+          onTap: () {
+            // TODO: Navigate to spot detail
+          },
+        );
+      },
     );
   }
 }

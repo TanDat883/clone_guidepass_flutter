@@ -71,7 +71,8 @@ flutter:
   assets:
      - assets/images/bg.jpg
      - assets/images/background.jpg
-    #  - assets/images/map.png
+     - assets/images/dinhdoclap.jpg
+     - assets/images/nhatrienlam.jpg
     #  - assets/images/poi.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

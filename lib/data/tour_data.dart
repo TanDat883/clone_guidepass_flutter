@@ -29,7 +29,7 @@ class TourData {
           'Tòa nhà Triển lãm nằm trong khuôn viên Dinh Độc Lập, là nơi trưng bày '
           'nhiều hiện vật lịch sử quý giá liên quan đến quá trình xây dựng và phát triển '
           'của Dinh qua các thời kỳ.',
-      imagePath: 'assets/images/background.jpg',
+      imagePath: 'assets/images/nhatrienlam.jpg',
     ),
   ];
 }
