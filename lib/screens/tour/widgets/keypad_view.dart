@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:clone_guidepass/config/app_theme.dart';
+import 'package:clone_guidepass/data/tour_data.dart';
+import 'package:clone_guidepass/screens/tour/poi_detail_screen.dart';
 
 class KeypadView extends StatefulWidget {
   const KeypadView({super.key});
@@ -10,10 +12,12 @@ class KeypadView extends StatefulWidget {
 
 class _KeypadViewState extends State<KeypadView> {
   String _inputCode = '';
+  bool _showError = false;
 
   void _onKeyPress(String key) {
     setState(() {
       _inputCode += key;
+      _showError = false;
     });
   }
 
@@ -21,15 +25,40 @@ class _KeypadViewState extends State<KeypadView> {
     if (_inputCode.isNotEmpty) {
       setState(() {
         _inputCode = _inputCode.substring(0, _inputCode.length - 1);
+        _showError = false;
       });
     }
   }
 
   void _onOk() {
-    if (_inputCode.isNotEmpty) {
-      // TODO: Handle keycode lookup
+    if (_inputCode.isEmpty) return;
+
+    final spot = TourData.findById(_inputCode);
+    if (spot != null) {
+      // Navigate to the POI detail screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PoiDetailScreen(spot: spot),
+        ),
+      );
+      // Clear input after navigation
+      setState(() {
+        _inputCode = '';
+        _showError = false;
+      });
+    } else {
+      // Show error feedback
+      setState(() {
+        _showError = true;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Tìm kiếm mã: $_inputCode')),
+        SnackBar(
+          content: Text('Không tìm thấy điểm tham quan mã: $_inputCode'),
+          backgroundColor: AppTheme.primaryRed,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
       );
     }
   }
@@ -39,7 +68,8 @@ class _KeypadViewState extends State<KeypadView> {
     return Column(
       children: [
         // ── Input Display ──
-        Container(
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
           width: double.infinity,
           margin: const EdgeInsets.all(AppTheme.spacingLG),
           padding: const EdgeInsets.symmetric(
@@ -47,23 +77,44 @@ class _KeypadViewState extends State<KeypadView> {
             vertical: AppTheme.spacingXL,
           ),
           decoration: BoxDecoration(
-            color: AppTheme.primaryRed.withAlpha(25),
+            color: _showError
+                ? const Color(0xFFFFEBEE)
+                : AppTheme.primaryRed.withAlpha(25),
             borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+            border: _showError
+                ? Border.all(color: AppTheme.primaryRed, width: 1.5)
+                : null,
           ),
-          child: Text(
-            _inputCode.isEmpty
-                ? 'Enter the keycode of the content you want to see'
-                : _inputCode,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: _inputCode.isEmpty ? 16 : 28,
-              fontWeight:
-                  _inputCode.isEmpty ? FontWeight.w400 : FontWeight.bold,
-              color: _inputCode.isEmpty
-                  ? AppTheme.primaryRed.withAlpha(150)
-                  : AppTheme.primaryRed,
-              letterSpacing: _inputCode.isEmpty ? 0 : 8,
-            ),
+          child: Column(
+            children: [
+              Text(
+                _inputCode.isEmpty
+                    ? 'Nhập mã số điểm tham quan'
+                    : _inputCode,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: _inputCode.isEmpty ? 16 : 28,
+                  fontWeight:
+                      _inputCode.isEmpty ? FontWeight.w400 : FontWeight.bold,
+                  color: _showError
+                      ? AppTheme.primaryRed
+                      : (_inputCode.isEmpty
+                          ? AppTheme.primaryRed.withAlpha(150)
+                          : AppTheme.primaryRed),
+                  letterSpacing: _inputCode.isEmpty ? 0 : 8,
+                ),
+              ),
+              if (_showError) ...[
+                const SizedBox(height: 8),
+                const Text(
+                  'Không tìm thấy. Vui lòng thử lại.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppTheme.primaryRed,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
 
@@ -109,14 +160,23 @@ class _KeypadViewState extends State<KeypadView> {
           child: SizedBox(
             width: double.infinity,
             height: 50,
-            child: TextButton(
-              onPressed: _onOk,
+            child: ElevatedButton(
+              onPressed: _inputCode.isNotEmpty ? _onOk : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _inputCode.isNotEmpty
+                    ? AppTheme.primaryRed
+                    : Colors.grey[300],
+                foregroundColor: AppTheme.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+                ),
+                elevation: _inputCode.isNotEmpty ? 2 : 0,
+              ),
               child: const Text(
                 'Ok',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textDark,
                 ),
               ),
             ),

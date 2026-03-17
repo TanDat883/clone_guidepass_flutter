@@ -17,7 +17,7 @@ class TourBottomNav extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onTap,
       selectedItemColor: AppTheme.white,
-      unselectedItemColor: AppTheme.white.withOpacity(0.6),
+      unselectedItemColor: AppTheme.white.withAlpha(150),
       backgroundColor: AppTheme.primaryRed,
       type: BottomNavigationBarType.fixed,
       selectedFontSize: 12,

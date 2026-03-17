@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:clone_guidepass/models/tour.dart';
 import 'package:clone_guidepass/models/tour_spot.dart';
 import 'package:clone_guidepass/config/app_theme.dart';
 import 'package:clone_guidepass/data/tour_data.dart';
 import 'package:clone_guidepass/widgets/language_dialog.dart';
-import 'package:clone_guidepass/screens/tour/widgets/tour_card.dart';
+import 'package:clone_guidepass/screens/tour/widgets/tour_group_card.dart';
 import 'package:clone_guidepass/screens/tour/widgets/tour_bottom_nav.dart';
 import 'package:clone_guidepass/screens/tour/widgets/keypad_view.dart';
+import 'package:clone_guidepass/screens/tour/widgets/map_view.dart';
+import 'package:clone_guidepass/screens/tour/tour_spot_list_screen.dart';
 
 class TourListScreen extends StatefulWidget {
   const TourListScreen({super.key});
@@ -21,9 +24,22 @@ class _TourListScreenState extends State<TourListScreen> {
     showLanguageDialog(context);
   }
 
+  String _getAppBarTitle() {
+    switch (_currentNavIndex) {
+      case 0:
+        return 'Danh sách';
+      case 1:
+        return 'Bàn phím';
+      case 2:
+        return 'Bản đồ';
+      default:
+        return '1-Dinh Độc Lập';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final spots = TourData.spots;
+    final tours = TourData.tours;
 
     return Scaffold(
       backgroundColor: AppTheme.bgLight,
@@ -34,7 +50,7 @@ class _TourListScreenState extends State<TourListScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          _currentNavIndex == 1 ? 'POI' : '1-Dinh Độc Lập',
+          _getAppBarTitle(),
           style: const TextStyle(
             color: AppTheme.white,
             fontSize: 16,
@@ -53,7 +69,7 @@ class _TourListScreenState extends State<TourListScreen> {
           ),
         ],
       ),
-      body: _buildBody(spots),
+      body: _buildBody(tours),
       bottomNavigationBar: TourBottomNav(
         currentIndex: _currentNavIndex,
         onTap: (index) {
@@ -65,23 +81,31 @@ class _TourListScreenState extends State<TourListScreen> {
     );
   }
 
-  Widget _buildBody(List<TourSpot> spots) {
-    if (_currentNavIndex == 1) {
-      return const KeypadView();
-    }
-    
-    // Default: Danh sách (index 0)
-    return ListView.builder(
-      padding: const EdgeInsets.all(AppTheme.spacingMD),
-      itemCount: spots.length,
-      itemBuilder: (context, index) {
-        return TourCard(
-          spot: spots[index],
-          onTap: () {
-            // TODO: Navigate to spot detail
+  Widget _buildBody(List<Tour> tours) {
+    switch (_currentNavIndex) {
+      case 1:
+        return const KeypadView();
+      case 2:
+        return const MapView();
+      default:
+        return ListView.builder(
+          padding: const EdgeInsets.all(AppTheme.spacingMD),
+          itemCount: tours.length,
+          itemBuilder: (context, index) {
+            final tour = tours[index];
+            return TourGroupCard(
+              tour: tour,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TourSpotListScreen(tour: tour),
+                  ),
+                );
+              },
+            );
           },
         );
-      },
-    );
+    }
   }
 }

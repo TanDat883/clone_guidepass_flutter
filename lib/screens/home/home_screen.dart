@@ -10,7 +10,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final spot = TourData.spots[0];
+    final tour = TourData.tours[0];
 
     return Scaffold(
       backgroundColor: AppTheme.white,
@@ -35,7 +35,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     decoration: AppTheme.cardDecoration,
                     child: Text(
-                      spot.name,
+                      tour.name,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   background: Image.asset(
-                    spot.imagePath,
+                    tour.imagePath,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -59,7 +59,7 @@ class HomeScreen extends StatelessWidget {
                     bottom: 120,
                   ),
                   child: Text(
-                    spot.description,
+                    tour.description,
                     style: Theme.of(context).textTheme.bodyLarge,
                     textAlign: TextAlign.justify,
                   ),
